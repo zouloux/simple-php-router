@@ -1,5 +1,5 @@
 {
-  "name": "pecee/simple-router",
+  "name": "zouloux/simple-php-router",
   "description": "Simple, fast PHP router that is easy to get integrated and in almost any project. Heavily inspired by the Laravel router.",
   "keywords": [
     "router",
@@ -17,8 +17,11 @@
     "request-handler"
   ],
   "license": "MIT",
+  "replace": {
+    "pecee/simple-router": "self.version"
+  },
   "support": {
-    "source": "https://github.com/skipperbent/simple-php-router/issues"
+    "source": "https://github.com/zouloux/simple-php-router"
   },
   "authors": [
     {
