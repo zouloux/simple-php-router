@@ -1,6 +1,8 @@
 <?php
 
 use Pecee\Http\Input\InputFile;
+use Pecee\Http\Request;
+use Pecee\SimpleRouter\Exceptions\NotFoundHttpException;
 
 require_once 'Dummy/DummyMiddleware.php';
 require_once 'Dummy/DummyController.php';
@@ -77,6 +79,27 @@ class RequestTest extends \PHPUnit\Framework\TestCase
             $this->assertEquals(null, $request->getIp(true));
         });
 
+    }
+
+    public function testRequestUriWithMultipleLeadingSlashesReturnsNotFound()
+    {
+        foreach (['//Test', '///', '////?foo=bar'] as $requestUri) {
+            $this->processHeader('request_uri', $requestUri, function(Request $request) use($requestUri) {
+                $expectedPath = explode('?', $requestUri, 2)[0];
+                $this->assertEquals($expectedPath, $request->getUrl()->getOriginalPath());
+
+                TestRouter::get('/{a?}/{b?}/{c?}', function () {
+                    $this->fail('A request path starting with multiple slashes must not match a route.');
+                });
+
+                try {
+                    TestRouter::start();
+                    $this->fail('A request path starting with multiple slashes must return not found.');
+                } catch (NotFoundHttpException $exception) {
+                    $this->assertEquals(404, $exception->getCode());
+                }
+            });
+        }
     }
 
     // TODO: implement more test-cases

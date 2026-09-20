@@ -130,11 +130,12 @@ class Request
 
         // Check if special IIS header exist, otherwise use default.
         $url = $this->getHeader('unencoded-url');
-        if ($url !== null) {
-            $this->setUrl(new Url($url));
-        } else {
-            $this->setUrl(new Url(urldecode((string)$this->getHeader('request-uri'))));
-        }
+        $url ??= urldecode((string)$this->getHeader('request-uri'));
+        $this->setUrl(
+            strpos($url, '//') === 0
+                ? Url::fromRequestUri($url)
+                : new Url($url)
+        );
         $this->setContentType((string)$this->getHeader('content-type'));
         $this->setMethod((string)($_POST[static::FORCE_METHOD_KEY] ?? $this->getHeader('request-method')));
         $this->inputHandler = new InputHandler($this);

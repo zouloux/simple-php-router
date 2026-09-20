@@ -70,6 +70,26 @@ class Url implements JsonSerializable
         $this->parse($url, true);
     }
 
+    public static function fromRequestUri(string $url): self
+    {
+        $instance = new self(null);
+        $instance->originalUrl = $url;
+
+        $parts = explode('?', $url, 2);
+        $path = $parts[0];
+        $instance->path = rtrim($path, '/') . '/';
+        if ($instance->path === '/' && $path !== '/') {
+            $instance->path = $path;
+        }
+        $instance->originalPath = $path;
+
+        if (isset($parts[1]) === true) {
+            $instance->setQueryString($parts[1]);
+        }
+
+        return $instance;
+    }
+
     public function parse(?string $url, bool $setOriginalPath = false): self
     {
         if ($url !== null) {

@@ -226,6 +226,12 @@ class Router
 
         $url = $this->request->getRewriteUrl() ?? $this->request->getUrl()->getPath();
 
+        if (strpos($url, '//') === 0) {
+            $this->debug('Halted route-processing as the request path starts with multiple slashes');
+
+            return;
+        }
+
         // Loop through each route-request
         foreach ($routes as $route) {
 
